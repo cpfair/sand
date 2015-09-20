@@ -1,11 +1,7 @@
 #include <pebble.h>
-%hooks_preamble
 
-// These are always included, but get optimized out if not used.
-#define NUM_CONTENT_LAYER_COPIES 1
-static Layer* content_layers[NUM_CONTENT_LAYER_COPIES];
-static Layer* content_layer; // The currently-visible layer
-static char content_layer_active_index;
+// The layer we use to apply all our visual modifications
+static Layer* content_layer;
 
 %module_code
 
