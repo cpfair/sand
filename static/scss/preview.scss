@@ -1,0 +1,23 @@
+.preview-content {
+    width: 144px;
+    height: 168px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: absolute;
+    top: 90px;
+    left: 49px;
+    cursor: default;
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color: white;
+    .placeholder {
+        display: block;
+        position: relative;
+    }
+}

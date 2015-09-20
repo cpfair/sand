@@ -1,0 +1,88 @@
+@import url(/static/webfont/encodesans.css);
+
+body, html {
+    font-family: 'encode_sansthin', sans-serif;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    cursor: default;
+}
+
+body {
+    margin: 40px 0;
+}
+
+.header {
+    background-image: url('../img/wordmark.svg');
+    width: 142px;
+    height: 83px;
+    margin: 0 0 40px 0;
+    display: inline-block;
+    text-indent: -99999px;
+}
+
+// Main layout
+#app {
+    // margin-top: 50px;
+}
+
+// Preview
+$preview_width: 162px * 1.5 - 1px; // The appstore runs it at 1.5x smaller
+$preview_height: 233px * 1.5;
+$viewport_height: 300px;
+$viewport_overrun: 300px;
+.preview-holder {
+    position: relative;
+    background-size: contain;
+    background-image: url('../img/screenshot_background.png');
+    background-repeat: no-repeat;
+    margin-top: ($viewport_height)/2 - $preview_height/2;
+    width: $preview_width;
+    height: $preview_height;
+    display: inline-block;
+}
+
+$module_setback: 16px;
+$fade_height: 8px;
+
+.docked-container {
+    position: absolute;
+    max-height: $viewport_height + $viewport_overrun;
+
+    &::before, &::after {
+        content: '';
+        height: $fade_height;
+        left: 0;
+        right: 0;
+        position: absolute;
+        z-index: 99;
+    }
+    &::before {
+        background-image: linear-gradient(white, rgba(255, 255, 255, 0));
+    }
+    &::after {
+        bottom: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0), white);
+    }
+
+    &>*:first-child {
+        padding-top: $fade_height;
+        padding-bottom: $fade_height;
+        max-height: ($viewport_height + $viewport_overrun) - $fade_height*2;
+        overflow-y: auto;
+    }
+}
+
+// Module selection
+.select-module-container {
+    right: 50%;
+    margin-right: $preview_width/2 + $module_setback;
+}
+
+
+// Module configuraiton, app selection
+.configure-module-container, .select-app-container {
+    left: 50%;
+    margin-left: $preview_width/2 + $module_setback;
+}

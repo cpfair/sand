@@ -1,0 +1,5 @@
+flask
+requests
+webassets
+git+https://github.com/cpfair/rockgarden.git
+unidecode

@@ -1,0 +1,75 @@
+var saturated_colours = [{"colour": "#550000", "name": "BulgarianRose"}, {"colour": "#ffaaaa", "name": "Melon"}, {"colour": "#aa5555", "name": "RoseVale"}, {"colour": "#aa0000", "name": "DarkCandyAppleRed"}, {"colour": "#ff5555", "name": "SunsetOrange"}, {"colour": "#ff0000", "name": "Red"}, {"colour": "#ff5500", "name": "Orange"}, {"colour": "#ffaa55", "name": "Rajah"}, {"colour": "#aa5500", "name": "WindsorTan"}, {"colour": "#ffaa00", "name": "ChromeYellow"}, {"colour": "#555500", "name": "ArmyGreen"}, {"colour": "#ffffaa", "name": "PastelYellow"}, {"colour": "#aaaa55", "name": "Brass"}, {"colour": "#aaaa00", "name": "Limerick"}, {"colour": "#ffff55", "name": "Icterine"}, {"colour": "#ffff00", "name": "Yellow"}, {"colour": "#aaff00", "name": "SpringBud"}, {"colour": "#55aa00", "name": "KellyGreen"}, {"colour": "#aaff55", "name": "Inchworm"}, {"colour": "#55ff00", "name": "BrightGreen"}, {"colour": "#005500", "name": "DarkGreen"}, {"colour": "#aaffaa", "name": "MintGreen"}, {"colour": "#55aa55", "name": "MayGreen"}, {"colour": "#00aa00", "name": "IslamicGreen"}, {"colour": "#55ff55", "name": "ScreaminGreen"}, {"colour": "#00ff00", "name": "Green"}, {"colour": "#00ff55", "name": "Malachite"}, {"colour": "#00aa55", "name": "JaegerGreen"}, {"colour": "#55ffaa", "name": "MediumAquamarine"}, {"colour": "#00ffaa", "name": "MediumSpringGreen"}, {"colour": "#005555", "name": "MidnightGreen"}, {"colour": "#aaffff", "name": "Celeste"}, {"colour": "#55aaaa", "name": "CadetBlue"}, {"colour": "#00aaaa", "name": "TiffanyBlue"}, {"colour": "#55ffff", "name": "ElectricBlue"}, {"colour": "#00ffff", "name": "Cyan"}, {"colour": "#00aaff", "name": "VividCerulean"}, {"colour": "#0055aa", "name": "CobaltBlue"}, {"colour": "#55aaff", "name": "PictonBlue"}, {"colour": "#0055ff", "name": "BlueMoon"}, {"colour": "#000055", "name": "OxfordBlue"}, {"colour": "#aaaaff", "name": "BabyBlueEyes"}, {"colour": "#5555aa", "name": "Liberty"}, {"colour": "#0000aa", "name": "DukeBlue"}, {"colour": "#5555ff", "name": "VeryLightBlue"}, {"colour": "#0000ff", "name": "Blue"}, {"colour": "#5500ff", "name": "ElectricUltramarine"}, {"colour": "#5500aa", "name": "Indigo"}, {"colour": "#aa55ff", "name": "LavenderIndigo"}, {"colour": "#aa00ff", "name": "VividViolet"}, {"colour": "#550055", "name": "ImperialPurple"}, {"colour": "#ffaaff", "name": "RichBrilliantLavender"}, {"colour": "#aa55aa", "name": "Purpureus"}, {"colour": "#aa00aa", "name": "Purple"}, {"colour": "#ff55ff", "name": "ShockingPink"}, {"colour": "#ff00ff", "name": "Magenta"}, {"colour": "#ff00aa", "name": "FashionMagenta"}, {"colour": "#aa0055", "name": "JazzberryJam"}, {"colour": "#ff55aa", "name": "BrilliantRose"}, {"colour": "#ff0055", "name": "Folly"}];
+
+define(["react"], function(React){
+    var ColourPicker = React.createClass({
+        componentDidMount: function() {
+            this._render_canvas();
+        },
+        _render_canvas: function(){
+            var canvas = React.findDOMNode(this.refs.canvas);
+            canvas.width = canvas.height = 500;
+            var ctx = canvas.getContext("2d");
+            var segment_r = 20;
+            var segment_r_pad = 2;
+            var segment_total_r = segment_r + segment_r_pad;
+            var layer_densities = [1, 1, 1, 1, 1, 10];
+            // var layer_densities = [1, 1, 1, 1, 1];
+            var total_ct = 64;
+
+
+
+            var hexagon = function(cx, cy, r) {
+                ctx.beginPath();
+                var begun;
+                for (var i = 0; i < Math.PI * 2; i += Math.PI/3) {
+                    var px = Math.cos(i) * r + cx;
+                    var py = Math.sin(i) * r + cy;
+                    if (!begun) {
+                        ctx.moveTo(px, py);
+                        begun = true;
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                }
+            }
+
+            ctx.fillStyle="black";
+            var spiral_cx = canvas.width/2;
+            var spiral_cy = canvas.height/2;
+            for (var i = layer_densities.length - 1; i >= 0; i--) {
+                var ct = Math.max(1, i * 6);
+                var density = layer_densities[i];
+                for (var c = 0; c < ct; c++) {
+                    if (c % density != 0) continue;
+                    if (total_ct <= 0) break;
+                    total_ct--;
+                    
+                    var angle = c/ct * Math.PI * 2 + (Math.PI/3/2);
+                    var r = i * segment_total_r * 0.866025404 * 2;
+                     // sqrt(3)/2
+                    var ox = spiral_cx + r * Math.cos(angle);
+                    var oy = spiral_cx + r * Math.sin(angle);
+                    // console.log(ox, oy)
+                    ctx.fillStyle = colours[total_ct].colour;
+                    ctx.strokeStyle = "black";
+                    hexagon(ox, oy, segment_r);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+            };
+            console.log(total_ct, "left");
+            
+            // hexagon(canvas.width/2, canvas.height/2, total_r);
+            // ctx.fill();
+
+        },
+        render: function() {
+            return  <div className="colour-picker">
+                        <canvas ref="canvas">Canvas not supported</canvas>
+                    </div>;
+
+        }
+    });
+
+    return ColourPicker;
+})

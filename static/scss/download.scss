@@ -1,0 +1,22 @@
+.download-control {
+    .error {
+        font-family: monospace;
+        display: block;
+        max-width: 80%;
+        left: 10%;
+        position: relative;
+        text-align: left;
+    }
+
+    .download-qr {
+        width: 150px;
+        height: 150px;
+    }
+
+    a.download-link {
+        color: #aaa;
+    }
+    .download-instructions {
+        font-size: 75%;
+    }
+}

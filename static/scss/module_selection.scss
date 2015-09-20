@@ -1,0 +1,22 @@
+.select-block {
+    font-size: 24px;
+    text-align: right;
+    // The scrollbar messes stuff up
+    padding-right: 16px;
+    .item {
+        min-width: 200px;
+        display: list-item;
+        list-style: none;
+        opacity: 0.5;
+        &.selected {
+            opacity: 1;
+        }
+        &.enabled {
+            // ???
+        }
+    }
+
+    &.enabled .item {
+        cursor: pointer;
+    }
+}

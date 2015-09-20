@@ -1,0 +1,15 @@
+({
+    baseUrl: "js/",
+    paths: {
+        jsx: 'ext/jsx',
+        JSXTransformer: 'ext/JSXTransformer',
+        text: 'ext/text',
+        react: "empty:"
+    },
+    jsx: {
+        fileExtension: '.jsx'
+    },
+    stubModules: ['jsx', 'text', 'JSXTransformer'],
+    name: "jsx!app",
+    out: "js/app.min.js"
+})

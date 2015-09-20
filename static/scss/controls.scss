@@ -1,0 +1,120 @@
+
+
+input[type="checkbox"]:checked, input[type="checkbox"]:not(:checked) { // cargo cult
+    left: -999px;
+    position: absolute;
+    & + label {
+        position: relative;
+        padding-left: 25px;
+        cursor: pointer;
+        &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 1px;
+            width: 18px;
+            height: 18px;
+            border: 1px solid black;
+            border-radius: 2px;
+        }
+    }
+}
+
+input[type="checkbox"]:checked {
+    & + label {
+        &:before {
+            background-image:url('../img/check.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    }
+}
+
+input[type="text"] {
+    border: 1px solid black;
+    border-radius: 2px;
+    font-family: inherit;
+    padding: 3px;
+}
+
+button {
+    border: 1px solid black;
+    border-radius: 2px;
+    background-color: transparent;
+    padding: 10px;
+    margin: 10px;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    &:hover, &.stuck {
+        background-color: black;
+        color: white;
+    }
+    &.stuck {
+        cursor: default;
+    }
+}
+
+$swatch_size: 18px;
+$swatch_margin: 2px;
+$swatch_border: 1px;
+$swatches_margin: 5px;
+
+.colour-field {
+    .swatch {
+        left: 0;
+        top: 0;
+        margin-right: 5px;
+        vertical-align: -2px;
+    }
+    span + .swatch {
+        margin-left: 5px;
+    }
+    cursor: pointer;
+}
+.colour-picker {
+    $col_count: 13;
+    $row_count: 5;
+    position: relative;
+    text-align: center;
+    transition: all 0.15s ease-in-out;
+    height: $row_count * (($swatch_border + $swatch_margin) * 2 + $swatch_size) + 2 * ($swatches_margin);
+    overflow: hidden;
+    &:not(.visible) {
+        height: 0;
+    }
+    .swatches {
+        position: relative;
+        margin: $swatches_margin;
+        width: $col_count * (($swatch_border + $swatch_margin) * 2 + $swatch_size);
+        height: $row_count * (($swatch_border + $swatch_margin) * 2 + $swatch_size);
+        line-height: 0;
+        .swatch {
+            margin: $swatch_margin;
+            cursor: pointer;
+        }
+    }
+}
+
+.colour-picker, .colour-field {
+    .swatch {
+        display: inline-block;
+        border: $swatch_border solid black;
+        width: $swatch_size;
+        height: $swatch_size;
+        border-radius: 2px;
+        position: relative;
+
+        &.GColorClear::before {
+            content: '';
+            width: 0;
+            height: 0;
+            top: 0;
+            left: 0;
+            position: absolute;
+            border-style: solid;
+            border-width: $swatch_size $swatch_size 0 0;
+            border-color: rgba(0, 0, 0, 0.15) transparent transparent transparent;
+        }
+    }
+}

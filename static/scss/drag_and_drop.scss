@@ -1,0 +1,9 @@
+.dnd-wrapper {
+    position: absolute;
+    &:not(.active) {
+        pointer-events: none;
+    }
+    &.active {
+        cursor: move;
+    }
+}
