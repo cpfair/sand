@@ -9,7 +9,7 @@ static Layer* content_layer;
 
 typedef struct ShadowWindowUserData {
   void* their_user_data;
-  WindowHandlers their_window_handlers;
+  WindowHandler their_window_appear_handler;
 } ShadowWindowUserData;
 
 
@@ -18,48 +18,45 @@ void master_update_proc(Layer* layer, GContext* ctx) {
   HOOK_UPDATE_PROC_CALLS(layer, ctx)
   // For colourization, flipping, etc.
 #ifdef HOOK_MODIFY_FRAMEBUFFER
-  // We only want to do this once - so only do it when we're rendering in the current top window
-  if (layer_get_window(layer) == window_stack_get_top_window()) {
-    GRect layer_bounds = layer_get_frame(window_get_root_layer(window_stack_get_top_window()));
+  GRect layer_bounds = layer_get_frame(window_get_root_layer(window_stack_get_top_window()));
 
-    GBitmap* framebuffer_bmp = graphics_capture_frame_buffer(ctx);
-    GRect framebuffer_bounds = gbitmap_get_bounds(framebuffer_bmp);
+  GBitmap* framebuffer_bmp = graphics_capture_frame_buffer(ctx);
+  GRect framebuffer_bounds = gbitmap_get_bounds(framebuffer_bmp);
 
-    #ifdef PBL_COLOR
-    // This is a fixup for Aplite apps with a statusbar running on Basalt
-    // It seems there are some shenanigans going on - the height of the window is reduced - but it's not shifted down
-    // (the entire framebuffer is writable - just the top section gets pasted over with the status bar at some later point)
-    // So something, somewhere is telling the graphics calls to shift things down - maybe I'm just missing something
-    // In the meantime - this.
-    layer_bounds.origin.y += framebuffer_bounds.size.h - layer_bounds.size.h;
-    #endif
+  #ifdef PBL_COLOR
+  // This is a fixup for Aplite apps with a statusbar running on Basalt
+  // It seems there are some shenanigans going on - the height of the window is reduced - but it's not shifted down
+  // (the entire framebuffer is writable - just the top section gets pasted over with the status bar at some later point)
+  // So something, somewhere is telling the graphics calls to shift things down - maybe I'm just missing something
+  // In the meantime - this.
+  layer_bounds.origin.y += framebuffer_bounds.size.h - layer_bounds.size.h;
+  #endif
 
-    // We want a GRect that falls entirely in the framebuffer - the layer frame extends outside of it during compositor animations
-    GRect drawable_bounds = layer_bounds;
-    if (drawable_bounds.origin.x < 0) {
-      drawable_bounds.size.w += drawable_bounds.origin.x;
-      drawable_bounds.origin.x = 0;
-    } else if (drawable_bounds.origin.x > (framebuffer_bounds.origin.x + framebuffer_bounds.size.w)) {
-      drawable_bounds = GRectZero;
-    }
-    if (drawable_bounds.origin.y < 0) {
-      drawable_bounds.size.h += drawable_bounds.origin.y;
-      drawable_bounds.origin.y = 0;
-    }  else if (drawable_bounds.origin.y > (framebuffer_bounds.origin.y + framebuffer_bounds.size.h)) {
-      drawable_bounds = GRectZero;
-    }
-    if (drawable_bounds.origin.x + drawable_bounds.size.w > framebuffer_bounds.size.w) {
-      drawable_bounds.size.w = framebuffer_bounds.size.w - drawable_bounds.origin.x;
-    }
-    if (drawable_bounds.origin.y + drawable_bounds.size.h > framebuffer_bounds.size.h) {
-      drawable_bounds.size.h = framebuffer_bounds.size.h - drawable_bounds.origin.y;
-    }
-
-    uint8_t* framebuffer = gbitmap_get_data((GBitmap*)ctx);
-    HOOK_MODIFY_FRAMEBUFFER_CALLS(layer_bounds, drawable_bounds, framebuffer_bmp, framebuffer);
-
-    graphics_release_frame_buffer(ctx, framebuffer_bmp);
+  // We want a GRect that falls entirely in the framebuffer - the layer frame extends outside of it during compositor animations
+  GRect drawable_bounds = layer_bounds;
+  if (drawable_bounds.origin.x < 0) {
+    drawable_bounds.size.w += drawable_bounds.origin.x;
+    drawable_bounds.origin.x = 0;
+  } else if (drawable_bounds.origin.x > (framebuffer_bounds.origin.x + framebuffer_bounds.size.w)) {
+    drawable_bounds = GRectZero;
   }
+  if (drawable_bounds.origin.y < 0) {
+    drawable_bounds.size.h += drawable_bounds.origin.y;
+    drawable_bounds.origin.y = 0;
+  }  else if (drawable_bounds.origin.y > (framebuffer_bounds.origin.y + framebuffer_bounds.size.h)) {
+    drawable_bounds = GRectZero;
+  }
+  if (drawable_bounds.origin.x + drawable_bounds.size.w > framebuffer_bounds.size.w) {
+    drawable_bounds.size.w = framebuffer_bounds.size.w - drawable_bounds.origin.x;
+  }
+  if (drawable_bounds.origin.y + drawable_bounds.size.h > framebuffer_bounds.size.h) {
+    drawable_bounds.size.h = framebuffer_bounds.size.h - drawable_bounds.origin.y;
+  }
+
+  uint8_t* framebuffer = gbitmap_get_data((GBitmap*)ctx);
+  HOOK_MODIFY_FRAMEBUFFER_CALLS(layer_bounds, drawable_bounds, framebuffer_bmp, framebuffer);
+
+  graphics_release_frame_buffer(ctx, framebuffer_bmp);
 #endif
 }
 
@@ -79,20 +76,9 @@ void window_set_user_data__patch(Window *window, void* user_data) {
   shadow_data->their_user_data = user_data;
 }
 
-void window_set_window_handlers__patch(Window *window, WindowHandlers handlers) {
-  ShadowWindowUserData* shadow_data = window_get_user_data(window);
-  shadow_data->their_window_handlers = handlers;
-}
-
-// These are our proxy window_handlers
-static void window_load(Window *window) {
-  ShadowWindowUserData* shadow_data = window_get_user_data(window);
-  if (shadow_data->their_window_handlers.load) shadow_data->their_window_handlers.load(window);
-}
-
 static void window_appear(Window *window) {
   ShadowWindowUserData* shadow_data = window_get_user_data(window);
-  if (shadow_data->their_window_handlers.appear) shadow_data->their_window_handlers.appear(window);
+  if (shadow_data->their_window_appear_handler) shadow_data->their_window_appear_handler(window);
   const Layer* root_layer = window_get_root_layer(window);
 
   // Whenever a window appears, we paste our stuff over top of it
@@ -107,26 +93,22 @@ static void window_appear(Window *window) {
   layer_add_child(root_layer, content_layer);
 }
 
-static void window_disappear(Window *window) {
+void window_set_window_handlers__patch(Window *window, WindowHandlers handlers) {
   ShadowWindowUserData* shadow_data = window_get_user_data(window);
-  if (shadow_data->their_window_handlers.disappear) shadow_data->their_window_handlers.disappear(window);
+  // Stop them from overwriting our appear handler
+  shadow_data->their_window_appear_handler = handlers.appear;
+  handlers.appear = window_appear;
+  // ...but pass the rest through
+  window_set_window_handlers(window, handlers);
 }
 
-static void window_unload(Window *window) {
-  ShadowWindowUserData* shadow_data = window_get_user_data(window);
-  if (shadow_data->their_window_handlers.unload) shadow_data->their_window_handlers.unload(window);
-}
-
-// We install them immediately when the window is created
+// We install the appear handler immediately, and set up the ShadowWindowUserData object that keeps this crazy train on the tracks
 Window* window_create__patch(void) {
   Window* window = window_create();
   ShadowWindowUserData* shadow_data = malloc(sizeof(ShadowWindowUserData));
   window_set_user_data(window, shadow_data);
   window_set_window_handlers(window, (WindowHandlers) {
-    .load = window_load,
-    .appear = window_appear,
-    .disappear = window_disappear,
-    .unload = window_unload,
+    .appear = window_appear
   });
   return window;
 }
@@ -163,11 +145,12 @@ void bluetooth_connection_service_unsubscribe__patch(void) {
 }
 #endif
 
-
-// Common startup
+// Common startup - though only BT uses it so far
+#ifdef HOOK_BT_CONNECTION_SERVICE
 void app_event_loop__patch(void) {
   #ifdef HOOK_BT_CONNECTION_SERVICE
   bluetooth_connection_service_subscribe(bluetooth_callback);
   #endif
   app_event_loop();
 }
+#endif
