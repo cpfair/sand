@@ -15,6 +15,7 @@ define(["react", "text!modules/icons.h", "colours"], function(React, icon_src, c
     var IconPreview = React.createClass({
         render_canvas: function(canvas, ctx){
             ctx.fillStyle = ctx.strokeStyle = colours.findByName(this.props.colour);
+            ctx.translate(0.5, 0.5);
             var icon_paths = paths[this.props.iconKey];
             for (var pidx = 0; pidx < icon_paths.length; pidx++) {
                 var path = icon_paths[pidx];
@@ -29,7 +30,8 @@ define(["react", "text!modules/icons.h", "colours"], function(React, icon_src, c
                 };
                 ctx.fill();
                 ctx.stroke();
-            };
+            }
+            ctx.translate(-0.5, -0.5);
         },
         render: function(){
             var icon_paths = paths[this.props.iconKey];
