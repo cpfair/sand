@@ -79,7 +79,7 @@ void window_set_user_data__patch(Window *window, void* user_data) {
 static void window_appear(Window *window) {
   ShadowWindowUserData* shadow_data = window_get_user_data(window);
   if (shadow_data->their_window_appear_handler) shadow_data->their_window_appear_handler(window);
-  const Layer* root_layer = window_get_root_layer(window);
+  const Layer* const root_layer = window_get_root_layer(window);
 
   // Whenever a window appears, we paste our stuff over top of it
   if (!content_layer) {
@@ -129,27 +129,48 @@ void layer_add_child__patch(Layer* parent, Layer* child) {
 #endif
 
 #ifdef HOOK_BT_CONNECTION_SERVICE
-static BluetoothConnectionHandler their_bt_status_handler;
+static BluetoothConnectionHandler their_bt_connection_handler;
 
 static void bluetooth_callback(bool connected) {
   HOOK_BT_CONNECTION_SERVICE_CALLS(connected)
-  if (their_bt_status_handler) their_bt_status_handler(connected);
+  if (their_bt_connection_handler) their_bt_connection_handler(connected);
 }
 
 void bluetooth_connection_service_subscribe__patch(BluetoothConnectionHandler handler) {
-  their_bt_status_handler = handler;
+  their_bt_connection_handler = handler;
 }
 
 void bluetooth_connection_service_unsubscribe__patch(void) {
-  their_bt_status_handler = NULL;
+  their_bt_connection_handler = NULL;
 }
 #endif
 
-// Common startup - though only BT uses it so far
-#ifdef HOOK_BT_CONNECTION_SERVICE
+
+#ifdef HOOK_BATT_STATE_SERVICE
+static BatteryStateHandler their_batt_state_handler;
+
+static void battery_callback(BatteryChargeState state) {
+  HOOK_BATT_STATE_SERVICE_CALLS(state)
+  if (their_batt_state_handler) their_batt_state_handler(state);
+}
+
+void battery_state_service_subscribe__patch(BatteryStateHandler handler) {
+  their_batt_state_handler = handler;
+}
+
+void battery_state_service_unsubscribe__patch(void) {
+  their_batt_state_handler = NULL;
+}
+#endif
+
+// Common startup
+#if defined(HOOK_BT_CONNECTION_SERVICE) || defined(HOOK_BATT_STATE_SERVICE)
 void app_event_loop__patch(void) {
   #ifdef HOOK_BT_CONNECTION_SERVICE
   bluetooth_connection_service_subscribe(bluetooth_callback);
+  #endif
+  #ifdef HOOK_BATT_STATE_SERVICE
+  battery_state_service_subscribe(battery_callback);
   #endif
   app_event_loop();
 }
