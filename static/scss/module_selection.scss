@@ -7,16 +7,14 @@
         min-width: 200px;
         display: list-item;
         list-style: none;
-        opacity: 0.5;
-        &.selected {
-            opacity: 1;
-        }
-        &.enabled {
-            // ???
-        }
+        opacity: 0.2;
     }
 
     &.enabled .item {
         cursor: pointer;
+        opacity: 0.5;
+        &.selected {
+            opacity: 1;
+        }
     }
 }

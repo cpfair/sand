@@ -7,14 +7,6 @@ define(["react", "modules/modules", "classnames"], function(React, modules, clas
             }.bind(this));
             return <div className={classnames({"select-block": true, enabled: this.props.enabled})}>
                         {module_options}
-                        <div className="item">Battery Status</div>
-                        <div className="item">Date</div>
-                        <div className="item">Time</div>
-                        <div className="item">Weather</div>
-                        <div className="item">Colour Swap</div>
-                        <div className="item">No Vibe</div>
-                        <div className="item">No Backlight</div>
-                        <div className="item">Scheduled Launch</div>
                     </div>
         }
     });

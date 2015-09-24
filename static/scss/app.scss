@@ -45,6 +45,7 @@ $viewport_overrun: 300px;
 
 $module_setback: 16px;
 $fade_height: 8px;
+$hand_vertical_centering: 31px; // By hand :(
 
 .docked-container {
     position: absolute;
@@ -71,6 +72,7 @@ $fade_height: 8px;
         padding-bottom: $fade_height;
         max-height: ($viewport_height + $viewport_overrun) - $fade_height*2;
         overflow-y: auto;
+        margin-top: $hand_vertical_centering;
     }
 }
 
