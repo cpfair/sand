@@ -20,6 +20,32 @@ define(["react", "classnames", "colours"], function(React, classnames, colours) 
         }
     })
 
+    var dow_selection = React.createClass({
+        mixins: [controls_mixin],
+        _dow_checked_change: function(dow, e) {
+            var val = this.getConfigValue();
+            if (e.target.checked) {
+                val = val | (1 << dow);
+            } else {
+                val = val & ~(1 << dow);
+            }
+            console.log(dow, val);
+            this.setConfigValue(val);
+        },
+        _dow_active: function(dow){
+            return !!((this.getConfigValue() >> dow) & 1);
+        },
+        render: function() {
+            var dow_controls = ["Su", "M", "T", "W", "Th", "F", "Sa"].map(function(dow_label, dow) {
+                return <span key={dow} className="day"><input type="checkbox" id={this.props.name + dow} checked={this._dow_active(dow)} onChange={this._dow_checked_change.bind(this, dow)}/><label htmlFor={this.props.name + dow}>{dow_label}</label></span>
+            }.bind(this));
+            return  <div className="dow-picker">
+                        <label>{this.props.label}</label>
+                        <div>{dow_controls}</div>
+                    </div>;
+        }
+    });
+
     var colour = React.createClass({
         mixins: [controls_mixin],
         getInitialState: function(){
@@ -47,9 +73,26 @@ define(["react", "classnames", "colours"], function(React, classnames, colours) 
         }
     });
 
+    var select = React.createClass({
+        mixins: [controls_mixin],
+        _selection_change: function(e) {
+            this.setConfigValue(e.target.value);
+        },
+        render: function() {
+            var options = this.props.options.map(function(option) {
+                return <option key={option.value} value={option.value}>{option.label}</option>;
+            }.bind(this));
+            return  <select value={this.getConfigValue()} onChange={this._selection_change}>
+                        {options}
+                    </select>;
+        }
+    });
+
 
     return {
         checkbox: checkbox,
-        colour: colour
+        days_of_week: dow_selection,
+        colour: colour,
+        select: select
     };
 })

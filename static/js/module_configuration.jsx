@@ -8,9 +8,10 @@ define(["react"], function(React){
                 </div>
             } else {
                 var Module = this.props.module; // capital M becase JSX
+                var info = !Module.hide_info ? <p>{Module.info}</p> : null;
                 return <div className="configure-block">
                             <h1>{Module.label}</h1>
-                            <p>{Module.info}</p>
+                            {info}
                             <Module.configuration_pane setConfigValue={this.props.setModuleConfigValue} getConfigValue={this.props.getModuleConfigValue}/>
                         </div>;
             }

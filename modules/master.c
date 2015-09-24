@@ -164,7 +164,7 @@ void battery_state_service_unsubscribe__patch(void) {
 #endif
 
 // Common startup
-#if defined(HOOK_BT_CONNECTION_SERVICE) || defined(HOOK_BATT_STATE_SERVICE)
+#if defined(HOOK_BT_CONNECTION_SERVICE) || defined(HOOK_BATT_STATE_SERVICE) || defined(HOOK_STARTUP)
 void app_event_loop__patch(void) {
   #ifdef HOOK_BT_CONNECTION_SERVICE
   bluetooth_connection_service_subscribe(bluetooth_callback);
@@ -172,6 +172,7 @@ void app_event_loop__patch(void) {
   #ifdef HOOK_BATT_STATE_SERVICE
   battery_state_service_subscribe(battery_callback);
   #endif
+  HOOK_STARTUP_CALLS()
   app_event_loop();
 }
 #endif

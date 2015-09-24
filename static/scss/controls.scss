@@ -30,6 +30,12 @@ input[type="checkbox"]:checked {
     }
 }
 
+.dow-picker {
+    .day:not(:first-child) {
+        margin-left: 5px;
+    }
+}
+
 input[type="text"] {
     border: 1px solid black;
     border-radius: 2px;
@@ -53,6 +59,15 @@ button {
     &.stuck {
         cursor: default;
     }
+}
+
+select {
+    border: 1px solid black;
+    border-radius: 2px;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 10px 0;
 }
 
 $swatch_size: 18px;
