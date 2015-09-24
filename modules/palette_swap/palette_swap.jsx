@@ -55,7 +55,12 @@ define(["react", "jsx!controls", "colours"], function(React, Controls, colours){
         info: "Add some colour to your black & white apps.",
         defaults: {
             remap_black: "GColorClear",
-            remap_white: "GColorClear"
+            remap_white: "GColorClear",
+            enabled: false
+        },
+        postprocess_configuration: function(config){
+            // It's more than a bit trick to do this as a preprocessor directive
+            config.enabled = ["GColorClear", "GColorWhite"].indexOf(config.remap_white) < 0 || ["GColorClear", "GColorBlack"].indexOf(config.remap_black) < 0;
         },
         configuration_pane: config,
         preview: preview

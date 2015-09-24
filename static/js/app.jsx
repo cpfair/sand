@@ -13,6 +13,7 @@ define(["react", "underscore", "modules/modules", "jsx!preview", "jsx!app_select
         _setConfigValue: function(module, key, value) {
             this.state.configuration[module.name] = this.state.configuration[module.name] || {};
             this.state.configuration[module.name][key] = value;
+            if (module.postprocess_configuration) module.postprocess_configuration(this.state.configuration[module.name]);
             this.setState({configurationGeneration: (this.state.configurationGeneration || 0) + 1});
             this.forceUpdate(); // I'm not good at react.js
         },

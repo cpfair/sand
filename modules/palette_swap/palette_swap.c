@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-
+#ifdef enabled
 // Colourization only works on Basalt - there really aren't that many colours to chose from on Aplite...
 #ifdef PBL_COLOR
 #define ROW_SIZE 144
@@ -12,7 +12,6 @@
 // (since, even in assembly, it'd be >=3 instructions per colour -> >= 6 bytes, vs. 1 byte ea. for LUT that's also O(1) to use)
 
 static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRect drawable_rect, GBitmap* framebuffer_bmp, uint8_t* framebuffer) {
-  if (PLAIN(remap_black) == PLAIN(GColorClear) && PLAIN(remap_white) == PLAIN(GColorClear)) return; // I hope the compiler optimizes this away when appropriate...
   const unsigned char x_start = drawable_rect.origin.x;
   const unsigned char x_extent = (drawable_rect.origin.x + drawable_rect.size.w);
   const unsigned short yoff_start = drawable_rect.origin.y * ROW_SIZE;
@@ -28,4 +27,5 @@ static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRec
     }
   }
 }
+#endif
 #endif
