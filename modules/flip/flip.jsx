@@ -10,6 +10,11 @@ define(["react", "jsx!controls", "jsx!drag_and_drop", "jsx!icon_preview"], funct
     });
 
     var preview = React.createClass({
+        update_shared_preview_data: function(data) {
+            // This nonsense is later read by the drag and drop stuff because I'm lazy and don't want to switch to paper.js or similar for d&d
+            data.flip_hz = this.props.getConfigValue("flip_hz");
+            data.flip_vt = this.props.getConfigValue("flip_vt");
+        },
         pre_render_canvas: function(canvas, ctx){
             if (this.props.getConfigValue("flip_hz")) {
                 ctx.translate(0, canvas.height/2);

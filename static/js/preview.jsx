@@ -1,12 +1,15 @@
 define(["react", "modules/modules"], function(React, modules){
     var Preview = React.createClass({
+        getInitialState: function(){
+            return {};
+        },
         render_preview_canvas: function(){
             var canvas = React.findDOMNode(this.refs.canvas);
             var ctx = canvas.getContext('2d');
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Pre-render steps
+            // Pre-render steps
             modules.forEach(function(module) {
                 var module_preview_ref = this.refs[module.name];
                 if (module_preview_ref && module_preview_ref.pre_render_canvas) module_preview_ref.pre_render_canvas(canvas, ctx);
@@ -29,6 +32,14 @@ define(["react", "modules/modules"], function(React, modules){
                 this.render_preview_canvas();
             }.bind(this));
         },
+        componentWillUpdate: function(){
+            var shared_data = {};
+            modules.forEach(function(module) {
+                var module_preview_ref = this.refs[module.name];
+                if (module_preview_ref && module_preview_ref.update_shared_preview_data) module_preview_ref.update_shared_preview_data(shared_data);
+            }.bind(this));
+            this.state.shared_data = shared_data; // Wheee
+        },
         componentDidUpdate: function(){
             this.render_preview_canvas();
         },
@@ -44,7 +55,7 @@ define(["react", "modules/modules"], function(React, modules){
         render: function() {
             var module_content = modules.map(function(Module) {
                 if (!Module.preview) return;
-                return <Module.preview render_preview_canvas={this.render_preview_canvas} ref={Module.name} key={Module.name} getConfigValue={this.props.getConfigValue.bind(null, Module)} setConfigValue={this.props.setConfigValue.bind(null, Module)} active={this.props.configuringModule == Module}/>
+                return <Module.preview shared_preview_data={this.state.shared_data} render_preview_canvas={this.render_preview_canvas} ref={Module.name} key={Module.name} getConfigValue={this.props.getConfigValue.bind(null, Module)} setConfigValue={this.props.setConfigValue.bind(null, Module)} active={this.props.configuringModule == Module}/>
             }.bind(this));
             return <div className="preview-holder">
                 <div className="preview-content">
