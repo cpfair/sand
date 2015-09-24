@@ -51,7 +51,7 @@ define(["react", "jsx!controls", "colours"], function(React, Controls, colours){
         label: "Time Round Simulator",
         info: "The future is now!",
         defaults: {
-            enabled: true,
+            enabled: false,
             bezel_colour: "GColorWhite",
         },
         configuration_pane: config,
