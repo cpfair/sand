@@ -30,7 +30,7 @@ define(["react", "classnames", "reqwest"], function(React, classnames, reqwest){
         render: function() {
             var controls, result, error;
             if (!this.state.running) {
-                if (this.state.capturedConfigurationGeneration != this.props.configurationGeneration || 1) {
+                if (this.state.capturedConfigurationGeneration != this.props.configurationGeneration) {
                     controls = <div><button onClick={this.startJob}>Remix {this.state.capturedConfigurationGeneration ? "Again" : ""}</button></div>;
                 }
             } else {
@@ -45,7 +45,7 @@ define(["react", "classnames", "reqwest"], function(React, classnames, reqwest){
                 if (this.state.jobStatus.state == "done") {
                     result = <a className="download-link" href={this.state.jobStatus.pbw_url}>
                                 <img className="download-qr" src={"https://chart.googleapis.com/chart?chs=150x150&cht=qr&choe=ISO-8859-1&chl=" + encodeURI(this.state.jobStatus.pbw_url)}/>
-                                <div className="download-instructions">(scan or click to download PBW)</div>
+                                <div className="download-instructions">(scan, or click to download PBW)</div>
                             </a>
                 }
             }
