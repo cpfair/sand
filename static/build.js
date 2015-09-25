@@ -1,10 +1,10 @@
 ({
+    mainConfigFile: "js/boot.js",
     baseUrl: "js/",
     paths: {
         jsx: 'ext/jsx',
         JSXTransformer: 'ext/JSXTransformer',
-        text: 'ext/text',
-        react: "empty:"
+        text: 'ext/text'
     },
     jsx: {
         fileExtension: '.jsx'

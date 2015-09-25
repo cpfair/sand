@@ -3,3 +3,5 @@ __pycache__
 *.ai
 .webassets-cache
 static/css/app.css
+app.min.js
+

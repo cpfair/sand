@@ -3,24 +3,7 @@
     <head>
         <title>sand: remix pebble apps</title>
         <script type="text/javascript" src="/static/js/ext/require.js"></script>
-        <script type="text/javascript">
-            require.config({
-                baseUrl: "static/js/",
-                paths: {
-                    jsx: 'ext/jsx',
-                    JSXTransformer: 'ext/JSXTransformer',
-                    text: 'ext/text',
-                    react: 'ext/React',
-                    classnames: 'ext/classNames',
-                    reqwest: 'ext/reqwest.min',
-                    underscore: 'ext/underscore-min'
-                },
-                jsx: {
-                    fileExtension: '.jsx'
-                },
-                name: "jsx!app",
-            });
-        </script>
+        <script type="text/javascript" src="{{js_url}}"></script>
         <link rel="stylesheet" type="text/css" href="{{ css_url }}">
     </head>
     <body>
