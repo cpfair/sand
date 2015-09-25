@@ -24,7 +24,11 @@ define(["react", "modules/modules"], function(React, modules){
         },
         update_background: function(src){
             var img = new Image;
-            if (src.indexOf("/") != 0) src = "/screenshot/" + src;
+            if (src.indexOf("/") != 0) {
+                // Run the request through our proxy to satisfy canvas's security requirements
+                // https://assets.getpebble.com/api/file/<token>/convert?cache=true&w=144&h=168&fit=cro
+                src = "/screenshot/" + src.split('/')[5];
+            }
             img.src = src;
             this.setState({loading_background_image: img});
             img.addEventListener("load", function(){

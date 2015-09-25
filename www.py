@@ -59,10 +59,9 @@ def download_job(job_uuid):
     return send_file(job.output_pbw, as_attachment=True)
 
 # We need to proxy the screenshots to have full use of canvas features without running into cross-domain issues
-@app.route('/screenshot/<path:url>', methods=['GET'])
-def proxy_screenshot(url):
-    if not url.startswith("https://assets.getpebble.com/api/file/"):
-        abort(400)
+@app.route('/screenshot/<token>', methods=['GET'])
+def proxy_screenshot(token):
+    url = "https://assets.getpebble.com/api/file/" + token + "/convert?cache=true&w=144&h=168&fit=crop"
     req = requests.get(url, stream=True)
     return Response(stream_with_context(req.iter_content()), content_type=req.headers['content-type'])
 
