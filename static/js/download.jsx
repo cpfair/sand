@@ -31,7 +31,7 @@ define(["react", "classnames", "reqwest"], function(React, classnames, reqwest){
             var controls, result, error;
             if (!this.state.running) {
                 if (this.state.capturedConfigurationGeneration != this.props.configurationGeneration) {
-                    controls = <div><button onClick={this.startJob}>Remix {this.state.capturedConfigurationGeneration ? "Again" : ""}</button></div>;
+                    controls = <div><button onClick={this.startJob}>Remix {this.props.app.name} {this.state.capturedConfigurationGeneration ? "Again" : ""}</button></div>;
                 }
             } else {
                 controls = <button className="stuck">{stateMap[this.state.jobStatus.state] || "Getting ready..."}</button>;

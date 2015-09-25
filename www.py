@@ -1,17 +1,32 @@
 from flask import Flask, render_template, jsonify, request, abort, url_for, send_file, Response, stream_with_context
 from job import CompilationJob, CompilationState
 import requests
+import os
+
+PRODUCTION = os.environ.get("PRODUCTION", False) == "1"
 
 app = Flask(__name__)
 
-from webassets.loaders import PythonLoader
-assets_env = PythonLoader("static.environment").load_environment()
-assets_env.debug = True
-css_urls = lambda: assets_env["css"].urls()
+# Otherwise errors disappear into the ether
+if PRODUCTION:
+    import logging
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.ERROR)
+    app.logger.addHandler(stream_handler)
+
+if not PRODUCTION:
+    from webassets.loaders import PythonLoader
+    assets_env = PythonLoader("static.environment").load_environment()
+    assets_env.debug = True
+    css_url = lambda: assets_env["css"].urls()[0]
+else:
+    css_url = lambda: "/static/css/app.css"
+
+js_url = lambda: "/static/js/app.min.js" if PRODUCTION else "/static/js/boot.js"
 
 @app.route('/')
 def index():
-    return render_template('index.html', css_url=css_urls()[0])
+    return render_template('index.html', css_url=css_url(), js_url=js_url())
 
 def job_status(job):
     result = job.status

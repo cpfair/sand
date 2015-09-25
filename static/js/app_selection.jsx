@@ -35,6 +35,7 @@ define(["react", "classnames", "reqwest"], function(React, classnames, reqwest){
         },
         _resultToApp: function(result){
             return {
+                name: result.title,
                 id: result.id,
                 screenshots: result.screenshot_images
             };

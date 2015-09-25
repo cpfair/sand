@@ -1,6 +1,14 @@
 // Here is where you define all the modules since we can't actually search the FS
-var module_list = ["bt_monitor", "battery_monitor", "flip", "palette_swap", "power_save", "wakeup", "ptr_simulator"];
+// Once upon a time this was a nice array..., but r.js wasn't picking up the dependencies properly so...
 
-define(module_list.map(function(module){return "jsx!modules/" + module + "/" + module}), function(){
-    return [].splice.call(arguments, 0).map(function(module, idx){ module.name = module_list[idx]; return module; });
+var modules = ["bt_monitor", "battery_monitor", "flip", "palette_swap", "power_save", "wakeup", "ptr_simulator"];
+
+define(["jsx!modules/bt_monitor/bt_monitor",
+        "jsx!modules/battery_monitor/battery_monitor",
+        "jsx!modules/flip/flip",
+        "jsx!modules/palette_swap/palette_swap",
+        "jsx!modules/power_save/power_save",
+        "jsx!modules/wakeup/wakeup",
+        "jsx!modules/ptr_simulator/ptr_simulator"], function(){
+    return [].splice.call(arguments, 0).map(function(module, idx){ module.name = modules[idx]; return module; });
 });
