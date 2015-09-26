@@ -107,6 +107,7 @@ void window_set_window_handlers__patch(Window *window, WindowHandlers handlers) 
 Window* window_create__patch(void) {
   Window* window = window_create();
   ShadowWindowUserData* shadow_data = malloc(sizeof(ShadowWindowUserData));
+  memset(shadow_data, 0, sizeof(ShadowWindowUserData));
   window_set_user_data(window, shadow_data);
   window_set_window_handlers(window, (WindowHandlers) {
     .appear = window_appear
