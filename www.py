@@ -34,7 +34,7 @@ def job_status(job):
         result["error"] = str(result["error"]) # Can't give them the Exception via JSON
     result.update({"uri": url_for("check_job", job_uuid=job.uuid)})
     if job.status["state"] == CompilationState.Done:
-        result.update({"pbw_url": url_for("download_job", job_uuid=job.uuid, _external=True)})
+        result.update({"pbw_url": url_for("download_job", job_uuid=job.uuid, pbw_name=os.path.basename(job.output_pbw), _external=True)})
     return jsonify(result)
 
 @app.route('/job', methods=['POST'])
@@ -50,20 +50,21 @@ def check_job(job_uuid):
         abort(404)
     return job_status(job)
 
-@app.route('/job/<job_uuid>/download', methods=['GET'])
-def download_job(job_uuid):
-    job = CompilationJob.get(job_uuid)
-    if job is None or getattr(job, "output_pbw", None) is None:
-        abort(404)
-    print("send", job.output_pbw)
-    return send_file(job.output_pbw, as_attachment=True)
+if not PRODUCTION:
+    @app.route('/job/<job_uuid>/download/<pbw_name>', methods=['GET'])
+    def download_job(job_uuid, pbw_name):
+        job = CompilationJob.get(job_uuid)
+        if job is None or getattr(job, "output_pbw", None) is None:
+            abort(404)
+        print("send", job.output_pbw)
+        return send_file(job.output_pbw, as_attachment=True)
 
-# We need to proxy the screenshots to have full use of canvas features without running into cross-domain issues
-@app.route('/screenshot/<token>', methods=['GET'])
-def proxy_screenshot(token):
-    url = "https://assets.getpebble.com/api/file/" + token + "/convert?cache=true&w=144&h=168&fit=crop"
-    req = requests.get(url, stream=True)
-    return Response(stream_with_context(req.iter_content()), content_type=req.headers['content-type'])
+    # We need to proxy the screenshots to have full use of canvas features without running into cross-domain issues
+    @app.route('/screenshot/<token>', methods=['GET'])
+    def proxy_screenshot(token):
+        url = "https://assets.getpebble.com/api/file/" + token + "/convert?cache=true&w=144&h=168&fit=crop"
+        req = requests.get(url, stream=True)
+        return Response(stream_with_context(req.iter_content()), content_type=req.headers['content-type'])
 
 
 if __name__ == '__main__':
