@@ -67,7 +67,7 @@ select {
     background-color: transparent;
     font-family: inherit;
     font-size: inherit;
-    margin: 10px 0;
+    margin-bottom: 10px;
 }
 
 $swatch_size: 18px;
@@ -132,4 +132,11 @@ $swatches_margin: 5px;
             border-color: rgba(0, 0, 0, 0.15) transparent transparent transparent;
         }
     }
+}
+
+.button-remap .row-label {
+    display: inline-block;
+    width: 138px;
+    text-align: right;
+    margin-right: 4px;
 }
