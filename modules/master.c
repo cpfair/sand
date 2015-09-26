@@ -82,13 +82,14 @@ static void window_appear(Window *window) {
   const Layer* const root_layer = window_get_root_layer(window);
 
   // Whenever a window appears, we paste our stuff over top of it
+  const GRect parent_bounds = layer_get_bounds(root_layer);
   if (!content_layer) {
-    content_layer = layer_create(layer_get_bounds(root_layer));
+    content_layer = layer_create(parent_bounds);
     layer_set_update_proc(content_layer, master_update_proc);
-  } else {
-    // Make sure we're always matching the size of the window (status bars, etc)
-    layer_set_bounds(content_layer, layer_get_bounds(root_layer));
   }
+  // Make sure we're always matching the size of the window (status bars, etc)
+  // This is a no-op the first time they push a window
+  layer_set_bounds(content_layer, parent_bounds);
 
   layer_add_child(root_layer, content_layer);
 }
@@ -121,7 +122,7 @@ void window_destroy__patch(Window* window) {
 // Keep our stuff on top
 void layer_add_child__patch(Layer* parent, Layer* child) {
   layer_add_child(parent, child);
-  if (parent == window_get_root_layer(window_stack_get_top_window()) && content_layer && layer_get_window(content_layer) == layer_get_window(parent)) {
+  if (parent == window_get_root_layer(window_stack_get_top_window()) && content_layer) {
     layer_add_child(parent, content_layer);
   }
 }
