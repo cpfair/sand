@@ -79,7 +79,7 @@ class CompilationJob:
         c_code = CodeGenerator.generate_c_code(modules_dir, self._parameters["configuration"])
 
         # Set up our scratch space (same race condition as earlier...)
-        scratch_dir = os.path.join(self._scratch_dir, "blah")
+        scratch_dir = os.path.join(self._scratch_dir, self.uuid)
         if not os.path.exists(scratch_dir):
             os.makedirs(scratch_dir)
 
