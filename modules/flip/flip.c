@@ -59,7 +59,7 @@ static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRec
       uint32_t tmp_word, tmp_word_2;
       tmp_word = framebuffer[row_offset + x];
       __asm__("rbit %0, %1\n" : "=r"(tmp_word_2) : "r"(tmp_word));
-      const uint8_t tmp = tmp_word >> 24;
+      const uint8_t tmp = tmp_word_2 >> 24;
       tmp_word = framebuffer[row_offset + (ROW_ACTUAL_SIZE - x - 1)];
       __asm__("rbit %0, %1\n" : "=r"(tmp_word_2) : "r"(tmp_word));
       framebuffer[row_offset + x] = tmp_word_2 >> 24;

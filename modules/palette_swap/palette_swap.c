@@ -1,7 +1,6 @@
 #include <pebble.h>
 
 #ifdef enabled
-// Colourization only works on Basalt - there really aren't that many colours to chose from on Aplite...
 #ifdef PBL_COLOR
 #define ROW_SIZE 144
 
@@ -27,5 +26,22 @@ static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRec
     }
   }
 }
+#else // Aplite: fake it, considering there are only 2^2 choices.
+#define ROW_SIZE 20
+
+static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRect drawable_rect, GBitmap* framebuffer_bmp, uint8_t* framebuffer) {
+  GRect framebuffer_bounds = gbitmap_get_bounds(framebuffer_bmp);
+  if (remap_white == GColorBlack && remap_black != GColorWhite) {
+    memset(framebuffer, 0, framebuffer_bounds.size.h * ROW_SIZE);
+  } else if (remap_black == GColorWhite && remap_white != GColorBlack) {
+    memset(framebuffer, ~0, framebuffer_bounds.size.h * ROW_SIZE);
+  } else if (remap_black == GColorWhite && remap_white == GColorBlack) {
+    // We ignore the drawable_rect because it doesn't really matter on Aplite
+    for (int i = 0; i < framebuffer_bounds.size.h * ROW_SIZE; ++i) {
+      framebuffer[i] = ~framebuffer[i];
+    }
+  }
+}
+
 #endif
 #endif
