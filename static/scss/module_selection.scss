@@ -13,7 +13,7 @@
     &.enabled .item {
         cursor: pointer;
         opacity: 0.5;
-        &.selected {
+        &.selected, &:hover {
             opacity: 1;
         }
     }
