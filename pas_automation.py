@@ -71,7 +71,7 @@ class PASAutomation:
             "application[title]": app_metadata["title"],
             "application[category_id]": app_metadata["category_id"],
             "application[list_image]": filepickerify(app_metadata["list_image"]["144x144"]),
-            "application[icon_image]": filepickerify(app_metadata["icon_image"]["48x48"]),
+            "application[icon_image]": filepickerify(app_metadata["icon_image"]["48x48"] if "icon_image" in app_metadata else app_metadata["list_image"]["144x144"]),
             "commit": "Create"
         }
         creation_result = session.post("https://dev-portal.getpebble.com/applications", data=creation_request, allow_redirects=False)
