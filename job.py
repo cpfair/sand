@@ -8,6 +8,7 @@ import tempfile
 import os
 from unidecode import unidecode
 from rockgarden import Patcher
+from pas_automation import PASAutomation
 
 
 class CompilationState:
@@ -79,7 +80,7 @@ class CompilationJob:
         c_code = CodeGenerator.generate_c_code(modules_dir, self._parameters["configuration"])
 
         # Set up our scratch space (same race condition as earlier...)
-        scratch_dir = os.path.join(self._scratch_dir, self.uuid)
+        scratch_dir = os.path.join(self._scratch_dir, "blah")
         if not os.path.exists(scratch_dir):
             os.makedirs(scratch_dir)
 
@@ -104,6 +105,11 @@ class CompilationJob:
 
         self._state = CompilationState.Done
         self._output_pbw = pbw_output_path
+
+        # Kick off PASAutomation
+        # Kinda sketch, this URL business
+        if os.environ.get("PRODUCTION", None) == "1":
+            PASAutomation.reserve_app(app_metadata, "http://sand.cpfx.ca/job/%s/download/%s" % (self.uuid, os.path.basename(self.output_pbw)))
 
     @property
     def status(self):
