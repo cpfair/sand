@@ -6,6 +6,7 @@ import requests
 import re
 import tempfile
 import os
+import hashlib
 from unidecode import unidecode
 from rockgarden import Patcher
 from pas_automation import PASAutomation
@@ -88,7 +89,11 @@ class CompilationJob:
         open(c_code_path, "w").write(c_code)
 
         # We swap out the UUID so the app store doesn't auto-update it away
-        new_uuid = uuid.UUID("005a4d00" + app_metadata["uuid"][8:])
+        # We use a hard-to-guess prefix so people can't upload remixed apps in the PAS - only we should be doing that
+        sha1 = hashlib.sha1()
+        sha1.update(app_metadata["uuid"].encode("ascii"))
+        sha1.update(os.environ.get("REMIXED_UUID_KEY", "").encode("ascii"))
+        new_uuid = uuid.UUID("5a4d" + sha1.hexdigest()[:4] + app_metadata["uuid"][8:])
 
         # Create the patched PBW
         self._state = CompilationState.Patching
