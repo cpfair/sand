@@ -58,7 +58,7 @@ def create_job():
         def upload_to_pas(future):
             if not future.exception():
                 with app.app_context():
-                    dummy_url = url_for("dummy_pbw", new_uuid=job.output_pbw_uuid.hex, pbw_name=os.path.basename(job.output_pbw), _external=True)
+                    dummy_url = url_for("dummy_pbw", new_uuid=job.output_pbw_uuid.hex, pbw_type=job.app_metadata["type"], pbw_name=os.path.basename(job.output_pbw), _external=True)
                     PASAutomation.reserve_app(job.app_metadata, dummy_url)
         future.add_done_callback(upload_to_pas)
     return job_status(job)
@@ -88,12 +88,14 @@ def proxy_screenshot(token):
     req = requests.get(url, stream=True)
     return Response(stream_with_context(req.iter_content()), content_type=req.headers['content-type'])
 
-@app.route('/dummy_pbw/<new_uuid>/<pbw_name>', methods=['GET'])
-def dummy_pbw(new_uuid, pbw_name):
+@app.route('/dummy_pbw/<new_uuid>/<pbw_type>/<pbw_name>', methods=['GET'])
+def dummy_pbw(new_uuid, pbw_type, pbw_name):
     if not new_uuid.startswith("5a4d"):
         abort(404) # I don't know why I care
+    if pbw_type not in ("watchapp", "watchface"):
+        abort(400)
     tmp_file = tempfile.NamedTemporaryFile(prefix="sand-dummy-", suffix=".pbw")
-    dummy_patcher.patch_pbw("dummy.pbw", tmp_file.name, new_uuid=uuid.UUID(new_uuid))
+    dummy_patcher.patch_pbw("dummy.pbw", tmp_file.name, new_uuid=uuid.UUID(new_uuid), new_app_type=pbw_type)
     return send_file(tmp_file.name, as_attachment=True, attachment_filename=pbw_name)
 
 if __name__ == '__main__':
