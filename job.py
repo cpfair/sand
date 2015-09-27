@@ -9,7 +9,6 @@ import os
 import hashlib
 from unidecode import unidecode
 from rockgarden import Patcher
-from pas_automation import PASAutomation
 
 
 class CompilationState:
@@ -40,7 +39,7 @@ class CompilationJob:
                 job._error = err
                 raise err
         future.add_done_callback(completion_callback)
-        return job
+        return job, future
 
     @classmethod
     def get(cls, job_uuid):
@@ -60,7 +59,7 @@ class CompilationJob:
         appstore_uuid = self._parameters["app"]["id"] # Passed from JS-land
         appstore_uuid = re.sub(r"[^a-f0-9]", "", appstore_uuid)
         assert len(appstore_uuid) == 24, "Bad app UUID specified"
-        app_metadata = requests.get("https://api2.getpebble.com/v2/apps/id/%s" % appstore_uuid).json()["data"][0]
+        self.app_metadata = app_metadata = requests.get("https://api2.getpebble.com/v2/apps/id/%s" % appstore_uuid).json()["data"][0]
         # Fetch the app itself, if we need to
         cached_pbw_name = "%s-%s.pbw" % (appstore_uuid, app_metadata["latest_release"]["id"])
         cached_pbw_path = os.path.join(self._pbw_cache_dir, cached_pbw_name)
@@ -94,6 +93,7 @@ class CompilationJob:
         sha1.update(app_metadata["uuid"].encode("ascii"))
         sha1.update(os.environ.get("REMIXED_UUID_KEY", "").encode("ascii"))
         new_uuid = uuid.UUID("5a4d" + sha1.hexdigest()[:4] + app_metadata["uuid"][8:])
+        self.output_pbw_uuid = new_uuid
 
         # Create the patched PBW
         self._state = CompilationState.Patching
@@ -110,11 +110,6 @@ class CompilationJob:
 
         self._state = CompilationState.Done
         self._output_pbw = pbw_output_path
-
-        # Kick off PASAutomation
-        # Kinda sketch, this URL business
-        if os.environ.get("PRODUCTION", None) == "1":
-            PASAutomation.reserve_app(app_metadata, "http://sand.cpfx.ca/job/%s/download/%s" % (self.uuid, os.path.basename(self.output_pbw)))
 
     @property
     def status(self):
