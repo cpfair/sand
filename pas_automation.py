@@ -90,6 +90,7 @@ class PASAutomation:
 
         # At this point, the app is uploaded, we never want to try again even if timeline setup fails
         redis.set("sand-app-%s" % app_metadata["uuid"], pas_uuid)
+        redis.set("sand-app-original-%s" % app_metadata["uuid"], app_metadata["id"])
 
         # Wait for it to process
         retries = 20
