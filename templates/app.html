@@ -1,7 +1,9 @@
 {% extends 'index.html' %}
 {% block title %}remix pebble apps{% endblock %}
 {% block content %}
-<div id="app"></div>
+<div id="app">
+    <div class="preview-holder"><div class="preview-content"><img src="/static/img/placeholder.svg"/></div></div>
+</div>
 <div class="footer">
     Having trouble? Check out the <a href="{{ url_for('faq') }}">faq</a><br/>
     sand is an <a href="http://github.com/cpfair/sand">open-source project</a> powered by <a href="http://github.com/cpfair/rockgarden">rock garden</a>
