@@ -50,12 +50,13 @@ def job_status(job):
 def create_job():
     parameters = request.get_json()
     job, future = CompilationJob.create(parameters)
-    def upload_to_pas(future):
-        if not future.exception():
-            with app.app_context():
-                dummy_url = url_for("dummy_pbw", new_uuid=job.output_pbw_uuid.hex, pbw_name=os.path.basename(job.output_pbw), _external=True)
-                PASAutomation.reserve_app(job.app_metadata, dummy_url)
-    future.add_done_callback(upload_to_pas)
+    if PRODUCTION:
+        def upload_to_pas(future):
+            if not future.exception():
+                with app.app_context():
+                    dummy_url = url_for("dummy_pbw", new_uuid=job.output_pbw_uuid.hex, pbw_name=os.path.basename(job.output_pbw), _external=True)
+                    PASAutomation.reserve_app(job.app_metadata, dummy_url)
+        future.add_done_callback(upload_to_pas)
     return job_status(job)
 
 @app.route('/job/<job_uuid>', methods=['GET'])
