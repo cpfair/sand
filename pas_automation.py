@@ -1,11 +1,8 @@
 import concurrent.futures
-import redis as redis_client
 import os
 import re
 import requests
 import time
-
-redis = redis_client.Redis(host=os.environ.get("REDIS_HOST", "localhost"))
 
 # Process to create a new app:
 # https://dev-portal.getpebble.com/applications/new?type=[watchapp|watchface] -> get CSRF token/"authenticity_token"
@@ -37,18 +34,22 @@ redis = redis_client.Redis(host=os.environ.get("REDIS_HOST", "localhost"))
 
 class PASAutomation:
     _worker_pool = concurrent.futures.ThreadPoolExecutor(max_workers=5)
+    _redis = None
     @classmethod
     def reserve_app(cls, app_metadata, pbw_url):
+        if not cls._redis:
+            import redis as redis_client
+            cls._redis = redis_client.Redis(host=os.environ.get("REDIS_HOST", "localhost"))
         # Check if we've already created this app on the PAS
-        if not redis.exists("sand-app-%s" % app_metadata["uuid"]):
-            redis.set("sand-app-pending-%s" % app_metadata["uuid"], pbw_url)
+        if not cls._redis.exists("sand-app-%s" % app_metadata["uuid"]):
+            cls._redis.set("sand-app-pending-%s" % app_metadata["uuid"], pbw_url)
             future = cls._worker_pool.submit(cls._run, app_metadata, pbw_url)
             def completion_callback(future):
                 err = future.exception()
                 if err:
                     raise err
                 else:
-                    redis.delete("sand-app-pending-%s" % app_metadata["uuid"])
+                    cls._redis.delete("sand-app-pending-%s" % app_metadata["uuid"])
             future.add_done_callback(completion_callback)
 
     @classmethod
@@ -89,8 +90,8 @@ class PASAutomation:
         assert release_creation_result.status_code == 302, "Could not create release, got %s %s" % (release_creation_result.status_code, release_creation_result.text)
 
         # At this point, the app is uploaded, we never want to try again even if timeline setup fails
-        redis.set("sand-app-%s" % app_metadata["uuid"], pas_uuid)
-        redis.set("sand-app-original-%s" % app_metadata["uuid"], app_metadata["id"])
+        cls._redis.set("sand-app-%s" % app_metadata["uuid"], pas_uuid)
+        cls._redis.set("sand-app-original-%s" % app_metadata["uuid"], app_metadata["id"])
 
         # Wait for it to process
         retries = 20
