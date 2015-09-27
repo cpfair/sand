@@ -1,4 +1,5 @@
 #include <pebble.h>
+#import "common.h"
 
 #ifdef enabled
 #ifdef PBL_COLOR
