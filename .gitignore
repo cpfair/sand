@@ -4,4 +4,4 @@ __pycache__
 .webassets-cache
 static/css/app.css
 app.min.js
-
+icons.h
