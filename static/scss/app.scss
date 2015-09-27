@@ -22,9 +22,17 @@ body {
     text-indent: -99999px;
 }
 
+.footer {
+    color: #aaa;
+    a {
+        color: inherit;
+    }
+    margin-top: 40px;
+}
+
 // Main layout
 #app {
-    // margin-top: 50px;
+    margin-top: 40px;
 }
 
 // Preview

@@ -7,12 +7,7 @@
         <link rel="stylesheet" type="text/css" href="{{ css_url }}">
     </head>
     <body>
-        <div class="header">sand: remix pebble apps</div>
-        <div id="app"></div>
-        <script type="text/javascript">
-            require(["jsx!app"], function(App) {
-                (new App()).boot();
-            });
-        </script>
+        <a href="/"><div class="header">sand: remix pebble apps</div></a>
+        {% block content %}{% endblock %}
     </body>
 </html>

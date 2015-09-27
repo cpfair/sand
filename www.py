@@ -35,7 +35,11 @@ js_url = lambda: "/static/js/app.min.js" if PRODUCTION else "/static/js/boot.js"
 
 @app.route('/')
 def index():
-    return render_template('index.html', css_url=css_url(), js_url=js_url())
+    return render_template('app.html', css_url=css_url(), js_url=js_url())
+
+@app.route('/faq')
+def faq():
+    return render_template('faq.html', css_url=css_url())
 
 def job_status(job):
     result = job.status

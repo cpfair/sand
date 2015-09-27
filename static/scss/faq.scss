@@ -1,0 +1,10 @@
+$width: 900px;
+.faq {
+    position: relative;
+    max-width: $width;
+    left: 50%;
+    margin-left: -$width/2;
+    a {
+        color: inherit;
+    }
+}

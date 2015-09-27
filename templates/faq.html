@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% block title %}FAQ{% endblock %}
+{% block content %}
+<div class="faq">
+    <h1>faq</h1>
+    <h2>Why do I have two of the same app now?</h2>
+    <p>Apps you remix with sand show up as a second app on your watch alongside the original. You can tell which is which by checking which one has a "contact developer" link when you tap it on your phone.</p>
+    <h2>Timeline doesn't work :(</h2>
+    <p>Only certain aspects of the Pebble Timeline are supported by sand. Reminders sent just to you will work, but notifications send to a large group of people will not.</p>
+    <h2>The app crashes!</h2>
+    <p>This is most likely due to a shortage of memory. Some apps run close to the memory limit of your Pebble, so adding anything extra means it might crash or behave unusually. Try turning off some options or mixins and trying again.</p>
+    <h2>Can I make my own mixins?</h2>
+    <p>Yes, with some C skill. Head on over to the <a href="http://github.com/cpfair/rockgarden">rock garden github</a> - this is the library sand uses to remix apps. The <a href="http://github.com/cpfair/sand">sand github</a> has the source code powering all the mixins you see here.</p>
+</div>
+{% endblock %}
