@@ -33,7 +33,7 @@ import time
 
 
 class PASAutomation:
-    _worker_pool = concurrent.futures.ThreadPoolExecutor(max_workers=5)
+    _worker_pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
     _redis = None
     @classmethod
     def reserve_app(cls, app_metadata, pbw_url):
