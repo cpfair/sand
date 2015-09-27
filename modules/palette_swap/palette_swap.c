@@ -18,9 +18,9 @@ static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRec
   for (unsigned short row_offset = yoff_start; row_offset < yoff_extent; row_offset += ROW_SIZE) {
     const unsigned short xoff_extent = x_extent + row_offset;
     for (int xoff = x_start + row_offset; xoff < xoff_extent; xoff++) {
-      if (PLAIN(remap_black) != PLAIN(GColorClear) && framebuffer[xoff] == PLAIN(GColorBlack)) {
+      if (PLAIN(remap_black) != PLAIN(GColorClear) && (framebuffer[xoff] == PLAIN(GColorBlack) || framebuffer[xoff] == PLAIN(GColorDarkGray))) {
         framebuffer[xoff] = PLAIN(remap_black);
-      } else if (PLAIN(remap_white) != PLAIN(GColorClear) && framebuffer[xoff] == PLAIN(GColorWhite)) {
+      } else if (PLAIN(remap_white) != PLAIN(GColorClear) && (framebuffer[xoff] == PLAIN(GColorWhite) || framebuffer[xoff] == PLAIN(GColorLightGray))) {
         framebuffer[xoff] = PLAIN(remap_white);
       }
     }
