@@ -93,6 +93,10 @@ class PASAutomation:
         cls._redis.set("sand-app-%s" % app_metadata["uuid"], pas_uuid)
         cls._redis.set("sand-app-original-%s" % app_metadata["uuid"], app_metadata["id"])
 
+        # We won't bother trying to activate timeline for a watchface
+        if app_metadata["type"] == "watchface":
+            return
+
         # Wait for it to process
         retries = 20
         while True:
