@@ -7,6 +7,7 @@ import re
 import tempfile
 import os
 import hashlib
+import json
 from unidecode import unidecode
 from rockgarden import Patcher
 
@@ -83,6 +84,9 @@ class CompilationJob:
         scratch_dir = os.path.join(self._scratch_dir, self.uuid)
         if not os.path.exists(scratch_dir):
             os.makedirs(scratch_dir)
+
+        # Write out config for later perusal
+        json.dump(self._parameters, open(os.path.join(scratch_dir, "parameters.json"), "w"))
 
         c_code_path = os.path.join(scratch_dir, "mods.c")
         open(c_code_path, "w").write(c_code)
