@@ -40,6 +40,7 @@ input[type="text"] {
     border: 1px solid black;
     border-radius: 2px;
     font-family: inherit;
+    font-weight: inherit;
     padding: 3px;
 }
 
@@ -51,6 +52,7 @@ button {
     margin: 10px;
     font-family: inherit;
     font-size: inherit;
+    font-weight: inherit;
     cursor: pointer;
     &:hover, &.stuck {
         background-color: black;
@@ -67,6 +69,7 @@ select {
     background-color: transparent;
     font-family: inherit;
     font-size: inherit;
+    font-weight: inherit;
     margin-bottom: 10px;
 }
 
