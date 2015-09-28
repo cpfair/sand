@@ -17,7 +17,7 @@
 // Also, this changes the look of the animations on Basalt - it doesn't run fast enough
 // Hence, this is contrived so it runs reasonably fast
 // (it still doesn't run fast enough)
-#ifdef flip_hz
+#ifdef flip_y
 static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRect drawable_rect, GBitmap* framebuffer_bmp, uint8_t* framebuffer) {
   const char row_buffer[ROW_SIZE];
   const unsigned char x_start = drawable_rect.origin.x;
@@ -36,7 +36,7 @@ static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRec
 }
 #endif
 
-#ifdef flip_vt
+#ifdef flip_x
 static inline void %hook(modify_framebuffer) (const GRect layer_rect, const GRect drawable_rect, GBitmap* framebuffer_bmp, uint8_t* framebuffer) {
   const unsigned char x_start = drawable_rect.origin.x;
   const unsigned char x0_start = drawable_rect.origin.x * 2 + drawable_rect.size.w - 1;

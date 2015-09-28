@@ -10,8 +10,8 @@ define(["react", "classnames"], function(React, classnames){
         // This is super terrible
         _transform_for_flip: function(pos){
             if (!this._dnd_contents_size) this._dnd_contents_size = [0, 0];
-            if (this.props.shared_preview_data.flip_vt) pos[0] = 144 - pos[0] - this._dnd_contents_size[0];
-            if (this.props.shared_preview_data.flip_hz) pos[1] = 168 - pos[1] - this._dnd_contents_size[1];
+            if (this.props.shared_preview_data.flip_x) pos[0] = 144 - pos[0] - this._dnd_contents_size[0];
+            if (this.props.shared_preview_data.flip_y) pos[1] = 168 - pos[1] - this._dnd_contents_size[1];
             return pos;
         },
         _dnd_set_pos: function(pos){
@@ -34,8 +34,8 @@ define(["react", "classnames"], function(React, classnames){
             var dx = e.pageX - this.state._dnd_start_mouse_coords[0];
             var dy = e.pageY - this.state._dnd_start_mouse_coords[1];
 
-            if (this.props.shared_preview_data.flip_vt) dx = -dx;
-            if (this.props.shared_preview_data.flip_hz) dy = -dy;
+            if (this.props.shared_preview_data.flip_x) dx = -dx;
+            if (this.props.shared_preview_data.flip_y) dy = -dy;
             var new_x = this.state._dnd_start_object_pos[0] + dx
             var new_y = this.state._dnd_start_object_pos[1] + dy;
 
