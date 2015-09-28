@@ -1,7 +1,7 @@
 
 
 input[type="checkbox"]:checked, input[type="checkbox"]:not(:checked) { // cargo cult
-    left: -999px;
+    left: -9999px;
     position: absolute;
     & + label {
         position: relative;
